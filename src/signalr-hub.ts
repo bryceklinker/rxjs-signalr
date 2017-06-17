@@ -1,13 +1,17 @@
+import { SignalRError } from './signalr-error';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { SignalRState, toSignalRState } from "./signalr-state";
 
 export class SignalRHub {
     private _connection: SignalR.Hub.Connection;
     private _proxy: SignalR.Hub.Proxy;
+    private _state$: Subject<string>;
+    private _error$: Subject<SignalRError>;
     private _subjects: { [name: string]: Subject<any> };
 
     get connection(): SignalR.Hub.Connection {
-        return this._connection || (this._connection = $.hubConnection());
+        return this._connection || (this._connection = this.createConnection());
     }
 
     get proxy(): SignalR.Hub.Proxy {
@@ -18,8 +22,18 @@ export class SignalRHub {
         return this._hubName;
     }
 
+    get state$(): Observable<string> {
+        return this._state$;
+    }
+
+    get error$(): Observable<any> {
+        return this._error$;
+    }
+
     constructor(private _hubName: string) {
         this._subjects = {};
+        this._state$ = new Subject<string>();
+        this._error$ = new Subject<SignalRError>();
     }
 
     start() {
@@ -50,5 +64,21 @@ export class SignalRHub {
 
     private getOrCreateSubject<T>(event: string): Subject<T> {
         return this._subjects[event] || (this._subjects[event] = new Subject<T>());
+    }
+
+    private createConnection(): SignalR.Hub.Connection {
+        const connection = $.hubConnection();
+        connection.error(err => this.onError(err));
+        connection.stateChanged((state) => this.onStateChanged(state));
+        return connection;
+    }
+
+    private onStateChanged(state: SignalR.StateChanged) {
+        const newState = toSignalRState(state.newState);
+        this._state$.next(newState);
+    }
+    
+    private onError(error: SignalR.ConnectionError) {
+        this._error$.next(error);
     }
 }

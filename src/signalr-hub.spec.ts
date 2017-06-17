@@ -5,12 +5,14 @@ import * as sinonChai from 'sinon-chai';
 chai.use(sinonChai);
 
 import { SignalRHub } from './signalr-hub';
+import { SignalRState } from "./signalr-state";
 
 declare var global: any;
 
 describe('SignalRHub', () => {
     let proxy: SignalR.Hub.Proxy;
     let connection: SignalR.Hub.Connection;
+    let connectionStartStub: sinon.SinonStub;
     let hubConnectionStub: sinon.SinonStub;
     let consoleWarnStub: sinon.SinonStub;
 
@@ -18,7 +20,7 @@ describe('SignalRHub', () => {
         connection = $.hubConnection();
         proxy = connection.createHubProxy('na');
 
-        sinon.stub(connection, 'start');
+        sinon.stub(connection, 'start').callsFake(connectionStartFake);
         sinon.stub(connection, 'createHubProxy').returns(proxy);
 
         hubConnectionStub = sinon.stub($, 'hubConnection');
@@ -68,7 +70,7 @@ describe('SignalRHub', () => {
         hub.on<any>('stuff');
         hub.start();
         expect(console.warn).not.to.have.been.called;
-    })
+    });
 
     it('should send data to proxy', () => {
         sinon.stub(proxy, 'invoke');
@@ -77,10 +79,41 @@ describe('SignalRHub', () => {
         hub.start();
         hub.send<any>('method', { data: 'one' });
         expect(proxy.invoke).to.have.been.calledWith('method', { data: 'one' });
-    })
+    });
+
+    it('should notify of state change', (done) => {
+        let stateChange;
+        sinon.stub(connection, 'stateChanged').callsFake((callback) => stateChange = callback);
+
+        const hub = new SignalRHub('bob');
+        hub.start();
+        hub.state$.subscribe((state: string) => {
+            expect(state).to.equal(SignalRState.connected);
+            done();
+        });
+        
+        stateChange({ newState: SignalR.ConnectionState.Connected });
+    });
+
+    it('should notify of errors', (done) => {
+        let errorCallback;
+        sinon.stub(connection, 'error').callsFake((callback) => errorCallback = callback);
+
+        const hub = new SignalRHub('one');
+        hub.start();
+        hub.error$.subscribe((error) => {
+            expect(error).to.eql({});
+            done();
+        });
+        errorCallback({});
+    });
 
     afterEach(() => {
         hubConnectionStub.restore();
         consoleWarnStub.restore();
     });
+
+    function connectionStartFake(): JQueryPromise<any> {
+        return $.Deferred().resolve();
+    }
 })
