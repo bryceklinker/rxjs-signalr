@@ -6,6 +6,7 @@
   "author": "Bryce Klinker <bryce.klinker@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts --require spec-setup.ts",
     "test:watch": "npm run test -- --watch-extensions ts --watch"
   },
