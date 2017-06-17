@@ -4,10 +4,3 @@ machine:
 dependencies:
   pre:
     - echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" >> ~/.npmrc
-deployment:
-  npm:
-    tag: /v[0-9]+(\.[0-9]+)*/
-      commands:
-    - npm publish
-    - npm version
-    - git push --follow-tags
