@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts --require spec-setup.ts",
-    "test:watch": "npm run test -- --watch-extensions ts --watch"
+    "test:watch": "npm run test -- --watch-extensions ts --watch",
+    "publish:npm": "publish"
   },
   "dependencies": {
     "jquery": "3.2.1",
@@ -27,6 +28,7 @@
     "chai": "4.0.2",
     "jsdom": "11.0.0",
     "mocha": "3.4.2",
+    "publish": "^0.6.0",
     "sinon": "2.3.4",
     "sinon-chai": "2.11.0",
     "ts-node": "3.0.6",
