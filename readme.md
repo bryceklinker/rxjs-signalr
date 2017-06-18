@@ -47,6 +47,7 @@ const hub = createSignalRHub('{hubName}');
 hub.on('{name of event/method}').subscribe(data => {
     // Perform logic here
 });
+hub.start();
 ```
 
 ### Sending data to SignalR
@@ -55,6 +56,7 @@ hub.on('{name of event/method}').subscribe(data => {
 import { createSignalRHub } from 'rxjs-signalr';
 
 const hub = createSignalRHub('{hubName}');
+hub.start();
 hub.send('{name of event/method}', {});
 ```
 
@@ -64,6 +66,7 @@ hub.send('{name of event/method}', {});
 import { createSignalRHub } from 'rxjs-signalr';
 
 const hub = createSignalRHub('{hubName}');
+hub.start();
 hub.state$.subscribe(state => {
     // state will be a string value of: connected, connecting, dicsonnected, reconnecting.
     // Perform logic here
