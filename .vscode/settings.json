@@ -6,7 +6,6 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "node_modules": true,
-        "**/*.d.ts": { "when": "$(basename).ts" },
-        "**/*.js": { "when": "$(basename).ts" }
+        "dist": true
     }
 }
