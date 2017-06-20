@@ -2,6 +2,7 @@
   "name": "rxjs-signalr",
   "version": "0.0.2",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": "git@github.com:bryceklinker/rxjs-signalr.git",
   "author": "Bryce Klinker <bryce.klinker@gmail.com>",
   "license": "MIT",
