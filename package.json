@@ -10,6 +10,7 @@
     "build": "tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts --require spec-setup.ts",
     "test:watch": "npm run test -- --watch-extensions ts --watch",
+    "prepublish": "npm run build",
     "publish:npm": "publish"
   },
   "dependencies": {
