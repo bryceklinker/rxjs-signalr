@@ -15,8 +15,15 @@ describe('SignalRHubFactory', () => {
     })
 
     it('should use url and hubname to create hub', () => {
-        const hub = createSignalRHub('hub', 'http://google.com/signals');
-        expect(hub.url).toBe('http://google.com/signals');
+        const hub = createSignalRHub('hub', '/signals');
+        expect(hub.url).toBe('/signals');
         expect(hub.hubName).toBe('hub');
+    })
+
+    it('should create two hubs if url is different for each one', () => {
+        const hub1 = createSignalRHub('jack');
+        const hub2 = createSignalRHub('jack', '/other');
+        expect(hub1.url).toBeNull();
+        expect(hub2.url).toBe('/other');
     })
 })
