@@ -1,69 +1,64 @@
-import { expect } from 'chai';
-import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as sinonChai from 'sinon-chai';
-chai.use(sinonChai);
+import * as $ from 'jquery';
+import 'signalr';
 
 import { SignalRHub } from './signalr-hub';
-import { SignalRState } from "./signalr-state";
-
-declare var global: any;
+import { SignalRState } from './signalr-state';
 
 describe('SignalRHub', () => {
     let signalrUrl: string;
     let proxy: SignalR.Hub.Proxy;
     let connection: SignalR.Hub.Connection;
-    let connectionStartStub: sinon.SinonStub;
-    let hubConnectionStub: sinon.SinonStub;
-    let consoleWarnStub: sinon.SinonStub;
+    let connectionStartStub: jasmine.Spy;
+    let hubConnectionStub: jasmine.Spy;
+    let consoleWarnStub: jasmine.Spy;
 
     beforeEach(() => {
         connection = $.hubConnection();
         proxy = connection.createHubProxy('na');
 
-        sinon.stub(connection, 'start').callsFake(connectionStartFake);
-        sinon.stub(connection, 'createHubProxy').returns(proxy);
+        spyOn(connection, 'start').and.callFake(connectionStartFake);
+        spyOn(connection, 'createHubProxy').and.returnValue(proxy);
 
-        hubConnectionStub = sinon.stub($, 'hubConnection');
-        hubConnectionStub.callsFake((url, opts) => {
+        hubConnectionStub = spyOn($, 'hubConnection');
+        hubConnectionStub.and.callFake((url, opts) => {
             signalrUrl = url;
             return connection;
         });
 
-        consoleWarnStub = sinon.stub(console, 'warn');
+        consoleWarnStub = spyOn(console, 'warn');
     })
 
     it('should create hub connection', () => {
         const hub = new SignalRHub('');
-        expect(hub.connection).to.not.be.null;
-        expect($.hubConnection).to.have.been.calledOnce;
+        expect(hub.connection).not.toBeNull();
+        expect($.hubConnection).toHaveBeenCalled();
     });
 
     it('should create connection using url', () => {
         const hub = new SignalRHub('hub', 'http://somewhere.com/signalr');
         hub.start();
-        expect(signalrUrl).to.equal('http://somewhere.com/signalr');
+        expect(signalrUrl).toEqual('http://somewhere.com/signalr');
     })
 
     it('should create proxy for hub', () => {
         const hub = new SignalRHub('somehub');
-        expect(hub.proxy).to.not.be.null;
-        expect(connection.createHubProxy).to.have.been.calledWith('somehub');
+        expect(hub.proxy).not.toBeNull();
+        expect(connection.createHubProxy).toHaveBeenCalledWith('somehub');
     });
 
     it('should start the connection', () => {
         const hub = new SignalRHub('something');
         hub.start();
-        expect(connection.start).to.have.been.calledOnce;
+        expect(connection.start).toHaveBeenCalled();
     });
 
     it('should push received data to observers', (done) => {
         let onCallback;
-        sinon.stub(proxy, 'on').callsFake((event, callback) => onCallback = callback);
+        spyOn(proxy, 'on').and.callFake((event, callback) => onCallback = callback);
 
         const hub = new SignalRHub('help');
         hub.on<{}>('something').subscribe((data) => {
-            expect(data).to.eql({ id: 'one' });
+            expect(data).toEqual({ id: 'one' });
             done();
         });
         onCallback({ id: 'one' });
@@ -72,33 +67,33 @@ describe('SignalRHub', () => {
     it('should warn that no subscriptions have been registered', () => {
         const hub = new SignalRHub('bob');
         hub.start();
-        expect(console.warn).to.have.been.calledOnce;
+        expect(console.warn).toHaveBeenCalled();
     });
 
     it('should not warn that no subscriptions have been registered', () => {
         const hub = new SignalRHub('one');
         hub.on<any>('stuff');
         hub.start();
-        expect(console.warn).not.to.have.been.called;
+        expect(console.warn).not.toHaveBeenCalled();
     });
 
     it('should send data to proxy', () => {
-        sinon.stub(proxy, 'invoke');
+        spyOn(proxy, 'invoke');
 
         const hub = new SignalRHub('bob');
         hub.start();
         hub.send<any>('method', { data: 'one' });
-        expect(proxy.invoke).to.have.been.calledWith('method', { data: 'one' });
+        expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
     });
 
     it('should notify of state change', (done) => {
         let stateChange;
-        sinon.stub(connection, 'stateChanged').callsFake((callback) => stateChange = callback);
+        spyOn(connection, 'stateChanged').and.callFake((callback) => stateChange = callback);
 
         const hub = new SignalRHub('bob');
         hub.start();
         hub.state$.subscribe((state: string) => {
-            expect(state).to.equal(SignalRState.connected);
+            expect(state).toEqual(SignalRState.connected);
             done();
         });
         
@@ -107,20 +102,15 @@ describe('SignalRHub', () => {
 
     it('should notify of errors', (done) => {
         let errorCallback;
-        sinon.stub(connection, 'error').callsFake((callback) => errorCallback = callback);
+        spyOn(connection, 'error').and.callFake((callback) => errorCallback = callback);
 
         const hub = new SignalRHub('one');
         hub.start();
         hub.error$.subscribe((error) => {
-            expect(error).to.eql({});
+            expect(error).toEqual({});
             done();
         });
         errorCallback({});
-    });
-
-    afterEach(() => {
-        hubConnectionStub.restore();
-        consoleWarnStub.restore();
     });
 
     function connectionStartFake(): JQueryPromise<any> {

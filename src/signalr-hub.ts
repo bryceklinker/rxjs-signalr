@@ -1,7 +1,10 @@
-import { SignalRError } from './signalr-error';
+import * as $ from 'jquery';
+import 'signalr';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { SignalRState, toSignalRState } from "./signalr-state";
+
+import { SignalRError } from './signalr-error';
+import { SignalRState, toSignalRState } from './signalr-state';
 
 export class SignalRHub {
     private _connection: SignalR.Hub.Connection;

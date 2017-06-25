@@ -1,25 +1,23 @@
-import { expect } from 'chai';
-
-import { toSignalRState } from "./signalr-state";
+import { toSignalRState } from './signalr-state';
 
 describe('SignalRState', () => {
     it('should convert Connected to "connected"', () => {
         const strState = toSignalRState(SignalR.ConnectionState.Connected);
-        expect(strState).to.equal('connected');
+        expect(strState).toEqual('connected');
     });
 
     it('should convert Disconnected to "disconnected"', () => {
         const strState = toSignalRState(SignalR.ConnectionState.Disconnected);
-        expect(strState).to.equal('disconnected');
+        expect(strState).toEqual('disconnected');
     })
 
     it('should convert Reconnecting to "reconnecting"', () => {
         const strState = toSignalRState(SignalR.ConnectionState.Reconnecting);
-        expect(strState).to.equal('reconnecting');
+        expect(strState).toEqual('reconnecting');
     })
 
     it('should convert Connecting to "connecting"', () => {
         const strState = toSignalRState(SignalR.ConnectionState.Connecting);
-        expect(strState).to.equal('connecting');
+        expect(strState).toEqual('connecting');
     })
 })
