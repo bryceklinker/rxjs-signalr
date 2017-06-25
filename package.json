@@ -1,6 +1,6 @@
 {
   "name": "rxjs-signalr",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:bryceklinker/rxjs-signalr.git",
