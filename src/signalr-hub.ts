@@ -30,7 +30,8 @@ export class SignalRHub {
         return this._error$;
     }
 
-    constructor(private _hubName: string) {
+    constructor(private _hubName: string, 
+        private _url: string = null) {
         this._subjects = {};
         this._state$ = new Subject<string>();
         this._error$ = new Subject<SignalRError>();
@@ -67,7 +68,7 @@ export class SignalRHub {
     }
 
     private createConnection(): SignalR.Hub.Connection {
-        const connection = $.hubConnection();
+        const connection = $.hubConnection(this._url);
         connection.error(err => this.onError(err));
         connection.stateChanged((state) => this.onStateChanged(state));
         return connection;

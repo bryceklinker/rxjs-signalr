@@ -10,6 +10,7 @@ import { SignalRState } from "./signalr-state";
 declare var global: any;
 
 describe('SignalRHub', () => {
+    let signalrUrl: string;
     let proxy: SignalR.Hub.Proxy;
     let connection: SignalR.Hub.Connection;
     let connectionStartStub: sinon.SinonStub;
@@ -24,7 +25,10 @@ describe('SignalRHub', () => {
         sinon.stub(connection, 'createHubProxy').returns(proxy);
 
         hubConnectionStub = sinon.stub($, 'hubConnection');
-        hubConnectionStub.returns(connection);
+        hubConnectionStub.callsFake((url, opts) => {
+            signalrUrl = url;
+            return connection;
+        });
 
         consoleWarnStub = sinon.stub(console, 'warn');
     })
@@ -34,6 +38,12 @@ describe('SignalRHub', () => {
         expect(hub.connection).to.not.be.null;
         expect($.hubConnection).to.have.been.calledOnce;
     });
+
+    it('should create connection using url', () => {
+        const hub = new SignalRHub('hub', 'http://somewhere.com/signalr');
+        hub.start();
+        expect(signalrUrl).to.equal('http://somewhere.com/signalr');
+    })
 
     it('should create proxy for hub', () => {
         const hub = new SignalRHub('somehub');
