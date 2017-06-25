@@ -58,4 +58,5 @@ typings/
 .env
 
 **/*.js
+!karma.conf.js
 **/*.d.ts
