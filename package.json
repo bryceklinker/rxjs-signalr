@@ -16,7 +16,7 @@
   "dependencies": {
     "@types/jquery": "2.0.46",
     "@types/signalr": "2.2.33",
-    "jquery": "^3.2.1",
+    "jquery": "3.2.1",
     "rxjs": "5.4.0",
     "signalr": "^2.2.2"
   },
