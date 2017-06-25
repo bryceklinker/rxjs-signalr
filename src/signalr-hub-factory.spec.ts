@@ -13,4 +13,10 @@ describe('SignalRHubFactory', () => {
         const hub2 = createSignalRHub('bob');
         expect(hub2).toEqual(hub1);
     })
+
+    it('should use url and hubname to create hub', () => {
+        const hub = createSignalRHub('hub', 'http://google.com/signals');
+        expect(hub.url).toBe('http://google.com/signals');
+        expect(hub.hubName).toBe('hub');
+    })
 })

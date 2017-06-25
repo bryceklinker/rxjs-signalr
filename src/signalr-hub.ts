@@ -25,6 +25,10 @@ export class SignalRHub {
         return this._hubName;
     }
 
+    get url(): string  {
+        return this._url;
+    }
+
     get state$(): Observable<string> {
         return this._state$;
     }
