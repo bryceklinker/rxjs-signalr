@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/bryceklinker/rxjs-signalr.svg?style=svg)](https://circleci.com/gh/bryceklinker/rxjs-signalr)
+
 # Reactive Extensions wrapper for ASP.NET SignalR
 
 When consuming SignalR based services I wanted to be able to treat receiving data as an observable stream. This library provides a thin wrapper to allow consumption of SignalR services using RxJS Observables.
