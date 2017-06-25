@@ -12,6 +12,47 @@ Refer to the [ASP.NET SignalR docs](https://www.asp.net/signalr).
 
 ## Getting started
 
+### jQuery and Signalr
+
+This package relies on jquery and signalr packages. You will need to have both of them available to use this package.
+
+#### Browser
+
+Using this package in the browser will require the following script tags (assuming you are using npm)
+
+```html
+<html>
+    <head></head>
+
+    <body>
+        <script src="../node_modules/jquery/dist/jquery.js"></script>
+        <script src="../node_modules/signalr/jquery.signalR.js"></script>
+    </body>
+</html>
+```
+
+#### Webpack
+
+Using this package with a webpack build system you can use the provide plugin for webpack to ensure jquery is resolved correctly.
+
+```javascript
+var webpack = require('webpack');
+
+module.exports = {
+    entry: ...
+    output: ...
+    plugins; [
+        ...
+        new wepback.ProvidePlugin({
+            '$': 'jquery',
+            'window.jQuery': 'jquery',
+            'jQuery': 'jquery'
+        })
+        ...
+    ]    
+}
+```
+
 ### Install
 
 Install using npm:
