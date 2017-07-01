@@ -7,7 +7,7 @@
   "author": "Bryce Klinker <bryce.klinker@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "tsc --skipLibCheck",
+    "prepare": "tsc",
     "test": "karma start --single-run",
     "test:watch": "karma start",
     "publish:npm": "publish"
