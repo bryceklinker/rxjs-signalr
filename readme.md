@@ -1,4 +1,4 @@
-# Reactive Extensions wrapper for ASP.NET SignalR
+# RxJS wrapper for ASP.NET SignalR
 
 [![CircleCI](https://circleci.com/gh/bryceklinker/rxjs-signalr.svg?style=svg)](https://circleci.com/gh/bryceklinker/rxjs-signalr)
 
