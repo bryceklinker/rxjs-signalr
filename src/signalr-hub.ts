@@ -30,11 +30,11 @@ export class SignalRHub {
     }
 
     get state$(): Observable<string> {
-        return this._state$;
+        return this._state$.asObservable();
     }
 
-    get error$(): Observable<any> {
-        return this._error$;
+    get error$(): Observable<SignalRError> {
+        return this._error$.asObservable();
     }
 
     constructor(private _hubName: string, 
@@ -53,7 +53,7 @@ export class SignalRHub {
     on<T>(event: string): Observable<T> {
         const subject =  this.getOrCreateSubject<T>(event);
         this.proxy.on(event, (data: T) => subject.next(data))
-        return subject;
+        return subject.asObservable();
     }
 
     send<T>(method: string, data: T) {

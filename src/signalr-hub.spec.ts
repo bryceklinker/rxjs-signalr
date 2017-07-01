@@ -107,7 +107,7 @@ describe('SignalRHub', () => {
         const hub = new SignalRHub('one');
         hub.start();
         hub.error$.subscribe((error) => {
-            expect(error).toEqual({});
+            expect(error).toBeDefined();
             done();
         });
         errorCallback({});
