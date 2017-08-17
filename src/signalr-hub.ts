@@ -12,6 +12,7 @@ export class SignalRHub {
     private _state$: Subject<string>;
     private _error$: Subject<SignalRError>;
     private _subjects: { [name: string]: Subject<any> };
+    private _primePromise: JQueryPromise<any>;
 
     get connection(): SignalR.Hub.Connection {
         return this._connection || (this._connection = this.createConnection());
@@ -47,7 +48,7 @@ export class SignalRHub {
     start() {
         if(!this.hasSubscriptions())
             console.warn('No listeners have been setup. You need to setup a listener before starting the connection or you will not receive data.');
-        this.connection.start();
+        this._primePromise = this.connection.start();
     }
 
     on<T>(event: string): Observable<T> {
@@ -57,6 +58,9 @@ export class SignalRHub {
     }
 
     async send<T>(method: string, data: T): Promise<any> {
+        if (!this._primePromise)
+            return Promise.reject('The connection has not been started yet. Please start the connection by invoking the start method befor attempting to send a message to the server.');
+        await this._primePromise;
         return this.proxy.invoke(method, data);
     }
 

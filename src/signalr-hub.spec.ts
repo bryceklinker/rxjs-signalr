@@ -16,7 +16,7 @@ describe('SignalRHub', () => {
         connection = $.hubConnection();
         proxy = connection.createHubProxy('na');
 
-        spyOn(connection, 'start').and.callFake(connectionStartFake);
+        connectionStartStub = spyOn(connection, 'start').and.callFake(connectionStartFake);
         spyOn(connection, 'createHubProxy').and.returnValue(proxy);
 
         hubConnectionStub = spyOn($, 'hubConnection');
@@ -77,14 +77,35 @@ describe('SignalRHub', () => {
         expect(console.warn).not.toHaveBeenCalled();
     });
 
-    it('should send data to proxy', () => {
-        spyOn(proxy, 'invoke');
+    it('should send data to proxy', async () => {
+        spyOn(proxy, 'invoke').and.returnValue(Promise.resolve());;
 
         const hub = new SignalRHub('bob');
         hub.start();
-        hub.send<any>('method', { data: 'one' });
+        await hub.send<any>('method', { data: 'one' });
+
+        expect(connectionStartStub).toHaveBeenCalled();
         expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
     });
+
+    it('should fail to send data to server if not started', async () => {
+        spyOn(proxy, 'invoke');
+
+        let errorMessage = '';
+        const hub = new SignalRHub('bob');
+        try {
+            var result = await hub.send<any>('method', { data: 'one' });
+        } catch(error) {
+            errorMessage = error; // We expect the promise to be rejected with a string as result. 
+                                  // so we cannot use the default error assertion here, as that only
+                                  // works with standard JavaScript errors.
+        }
+        
+        expect(errorMessage).toBe('The connection has not been started yet. Please start the connection by invoking the start method befor attempting to send a message to the server.');
+        expect(connectionStartStub).not.toHaveBeenCalled();
+        expect(proxy.invoke).not.toHaveBeenCalled();
+    });
+
 
     it('should return data from proxy', async () => {
         spyOn(proxy, 'invoke').and.returnValue(Promise.resolve(42));
@@ -93,6 +114,7 @@ describe('SignalRHub', () => {
         hub.start();
         var result = await hub.send<any>('method', { data: 'one' });
         
+        expect(connectionStartStub).toHaveBeenCalled();
         expect(result).toBe(42);
         expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
     });
