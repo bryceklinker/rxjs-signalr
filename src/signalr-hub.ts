@@ -56,8 +56,8 @@ export class SignalRHub {
         return subject.asObservable();
     }
 
-    send<T>(method: string, data: T) {
-        this.proxy.invoke(method, data);
+    async send<T>(method: string, data: T): Promise<any> {
+        return this.proxy.invoke(method, data);
     }
 
     hasSubscriptions(): boolean {
