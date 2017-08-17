@@ -86,6 +86,17 @@ describe('SignalRHub', () => {
         expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
     });
 
+    it('should return data from proxy', async () => {
+        spyOn(proxy, 'invoke').and.returnValue(Promise.resolve(42));
+
+        const hub = new SignalRHub('bob');
+        hub.start();
+        var result = await hub.send<any>('method', { data: 'one' });
+        
+        expect(result).toBe(42);
+        expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
+    });
+
     it('should notify of state change', (done) => {
         let stateChange;
         spyOn(connection, 'stateChanged').and.callFake((callback) => stateChange = callback);
