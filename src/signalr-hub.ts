@@ -57,11 +57,11 @@ export class SignalRHub {
         return subject.asObservable();
     }
 
-    async send<T>(method: string, data: T): Promise<any> {
+    async send(method: string, ...args: any[]): Promise<any> {
         if (!this._primePromise)
             return Promise.reject('The connection has not been started yet. Please start the connection by invoking the start method befor attempting to send a message to the server.');
         await this._primePromise;
-        return this.proxy.invoke(method, data);
+        return this.proxy.invoke(method, ...args);
     }
 
     hasSubscriptions(): boolean {

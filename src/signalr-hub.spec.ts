@@ -82,11 +82,34 @@ describe('SignalRHub', () => {
 
         const hub = new SignalRHub('bob');
         hub.start();
-        await hub.send<any>('method', { data: 'one' });
+        await hub.send('method', { data: 'one' });
 
         expect(connectionStartStub).toHaveBeenCalled();
         expect(proxy.invoke).toHaveBeenCalledWith('method', { data: 'one' });
     });
+
+    it('should allow to invoke a server-side method without any parameters', async () => {
+        spyOn(proxy, 'invoke').and.returnValue(Promise.resolve());;
+
+        const hub = new SignalRHub('bob');
+        hub.start();
+        await hub.send('method');
+
+        expect(connectionStartStub).toHaveBeenCalled();
+        expect(proxy.invoke).toHaveBeenCalledWith('method');
+    });
+
+    it('should allow to invoke a server-side method with more than one parameter', async () => {
+        spyOn(proxy, 'invoke').and.returnValue(Promise.resolve());;
+
+        const hub = new SignalRHub('bob');
+        hub.start();
+        await hub.send('method', 1, 'Hello World', true);
+
+        expect(connectionStartStub).toHaveBeenCalled();
+        expect(proxy.invoke).toHaveBeenCalledWith('method', 1, 'Hello World', true);
+    });
+
 
     it('should fail to send data to server if not started', async () => {
         spyOn(proxy, 'invoke');
@@ -94,7 +117,7 @@ describe('SignalRHub', () => {
         let errorMessage = '';
         const hub = new SignalRHub('bob');
         try {
-            var result = await hub.send<any>('method', { data: 'one' });
+            var result = await hub.send('method', { data: 'one' });
         } catch(error) {
             errorMessage = error; // We expect the promise to be rejected with a string as result. 
                                   // so we cannot use the default error assertion here, as that only
@@ -112,7 +135,7 @@ describe('SignalRHub', () => {
 
         const hub = new SignalRHub('bob');
         hub.start();
-        var result = await hub.send<any>('method', { data: 'one' });
+        var result = await hub.send('method', { data: 'one' });
         
         expect(connectionStartStub).toHaveBeenCalled();
         expect(result).toBe(42);
