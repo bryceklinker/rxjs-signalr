@@ -13,9 +13,9 @@
     "publish:npm": "publish"
   },
   "dependencies": {
-    "jquery": "3.2.1",
-    "rxjs": "^5.4.1",
-    "signalr": "2.2.2"
+    "jquery": "~3.3.1",
+    "rxjs": "^6.2.0",
+    "signalr": "~2.3.0"
   },
   "devDependencies": {
     "@types/jasmine": "2.5.53",

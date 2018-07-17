@@ -1,7 +1,6 @@
 import * as $ from 'jquery';
 import 'signalr';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
 
 import { SignalRError } from './signalr-error';
 import { SignalRState, toSignalRState } from './signalr-state';
